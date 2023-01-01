@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BerandaWaliController;
 use App\Http\Controllers\BerandaOperatorController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,7 +23,9 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::prefix('operator')->middleware(['auth','operator'])->group(function() {
+    //ini route operator
     Route::get('beranda', [BerandaOperatorController::class, 'index'])->name('operator.beranda');
+    Route::resource('user', UserController::class);
 });
 
 Route::prefix('wali')->middleware(['auth','wali'])->group(function() {
