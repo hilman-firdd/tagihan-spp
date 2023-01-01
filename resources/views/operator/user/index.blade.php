@@ -28,8 +28,8 @@
                                     <td>{{ $user->email }}</td>
                                     <td>{{ $user->akses }}</td>
                                     <td>
-                                        <a href="{{ route('user.edit', $user->id) }}" class="btn btn-warning btn-sm">Edit</a>
-                                        <a href="#" onclick="deleteUser()" class="btn btn-danger btn-sm">Hapus</a>
+                                        <a href="{{ route('user.edit', $user->id) }}" class="btn btn-warning btn-sm"><i class="fa fa-edit"></i> Edit</a>
+                                        <a href="#" onclick="deleteUser()" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> Hapus</a>
                                         <form id="deleteUser" action="{{ route('user.destroy', $user->id) }}" method="POST">
                                             @method("DELETE")
                                             @csrf
