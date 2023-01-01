@@ -5,8 +5,8 @@
     <div class="col-md-12">
         <div class="card">
             <h5 class="card-header">Data User</h5>
-
             <div class="card-body">
+                <a href="{{ route('user.create') }}" class="btn btn-primary btn-sm">Tambah Data</a>
                 <div class="table-responsive">
                     <table class="table table-striped">
                         <thead>
@@ -16,6 +16,7 @@
                                 <th>No HP</th>
                                 <th>Email</th>
                                 <th>Akses</th>
+                                <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -26,6 +27,14 @@
                                     <td>{{ $user->nohp }}</td>
                                     <td>{{ $user->email }}</td>
                                     <td>{{ $user->akses }}</td>
+                                    <td>
+                                        <a href="{{ route('user.edit', $user->id) }}" class="btn btn-warning btn-sm">Edit</a>
+                                        <a href="#" onclick="deleteUser()" class="btn btn-danger btn-sm">Hapus</a>
+                                        <form id="deleteUser" action="{{ route('user.destroy', $user->id) }}" method="POST">
+                                            @method("DELETE")
+                                            @csrf
+                                        </form>
+                                    </td>
                                 </tr>
                             @empty
                                 <tr>
@@ -41,3 +50,13 @@
     </div>
 </div>
 @endsection
+
+@push('script')
+<script>
+    function deleteUser() {
+        if(confirm('Yakin ingin dihapus?')) {
+            document.querySelector('#deleteUser').submit();
+        }
+    }
+</script>
+@endpush

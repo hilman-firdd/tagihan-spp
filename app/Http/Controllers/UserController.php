@@ -15,7 +15,7 @@ class UserController extends Controller
     public function index()
     {
         $users = User::where('akses', '<>', 'wali')->latest()->paginate(10);
-        return view('operator.user', compact('users'));
+        return view('operator.user.index', compact('users'));
     }
 
     /**
@@ -25,7 +25,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+        return view('operator.user.add');
     }
 
     /**
@@ -36,7 +36,18 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $requestData = $request->validate([
+            'name' => 'required',
+            'email' => 'required|unique:users,email',
+            'nohp' => 'required|unique:users,nohp',
+            'akses' => 'required|in:operator,admin',
+            'password' => 'required'
+        ]);
+        $requestData['password'] = bcrypt($requestData['password']);
+        $requestData['email_verified_at'] = now();
+        User::create($requestData);
+        flash('Data berhasil disimpan');
+        return redirect()->route('user.index');
     }
 
     /**
@@ -58,7 +69,8 @@ class UserController extends Controller
      */
     public function edit($id)
     {
-        //
+        $user = User::find($id);
+        return view('operator.user.edit', compact('user'));
     }
 
     /**
@@ -70,7 +82,25 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $requestData = $request->validate([
+            'name' => 'required',
+            'email' => 'required|unique:users,email,'.$id,
+            'nohp' => 'required|unique:users,nohp,'.$id,
+            'akses' => 'required|in:operator,admin',
+            'password' => 'nullable'
+        ]);
+
+        $userUpdate = User::findOrFail($id);
+        if($requestData['password'] == '') {
+            unset($requestData['password']);
+        }else{
+            $requestData['password'] = bcrypt($requestData['password']);
+        }
+
+        $userUpdate->fill($requestData);
+        $userUpdate->save();
+        flash('Data berhasil diubah');
+        return redirect()->route('user.index');
     }
 
     /**
@@ -81,6 +111,14 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $user = User::findOrFail($id);
+
+        if($user->email == 'operator@gmail.com') {
+            flash('Data tidak bisa dihapus')->error();
+            return back();
+        }
+        $user->delete();
+        flash('Data Berhasil dihapus');
+        return back();
     }
 }
